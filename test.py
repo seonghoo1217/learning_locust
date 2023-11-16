@@ -1,6 +1,5 @@
-from locust import HttpUser, task, constant, events
-from locust.env import Environment
-from locust.runners import LocalRunner
+import sys
+from locust import HttpUser, task, constant
 
 class MainTask(HttpUser):
     wait_time = constant(1)
@@ -12,10 +11,6 @@ class MainTask(HttpUser):
         print(response.text)
 
 if __name__ == "__main__":
-    user_class = MainTask
-    environment = Environment(user_classes=[user_class])
-    runner = LocalRunner(environment)
-    environment.runner = runner
-    environment.host = "http://localhost:8080" # 변경 필요
-    runner.start(2000, spawn_rate=200)
-    runner.greenlet.join()
+    sys.argv = [sys.argv[0], '-f', sys.argv[0], '--host=http://localhost:8080', '--users=2000', '--spawn-rate=200']
+    from locust.main import main
+    main()
